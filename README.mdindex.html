@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Video Renamer Pro - Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                max-width: 600px;
+                min-height: auto;
+                margin: 20px auto;
+                border-radius: 24px;
+                padding: 40px;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.8em;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 640px) {
+            h1 {
+                font-size: 2.2em;
+                margin-top: 0;
+            }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a0a0a0;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .upload-zone {
+            border: 3px dashed rgba(233, 69, 96, 0.5);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(233, 69, 96, 0.05);
+            margin-bottom: 20px;
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone:active {
+            transform: scale(0.98);
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.15);
+        }
+
+        @media (min-width: 640px) {
+            .upload-zone:hover {
+                border-color: #e94560;
+                background: rgba(233, 69, 96, 0.1);
+                transform: translateY(-2px);
+            }
+        }
+
+        .upload-zone.dragover {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.2);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 56px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .upload-text {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .upload-hint {
+            font-size: 0.85em;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .mobile-tips {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+            color: #ccc;
+            border-left: 4px solid #e94560;
+            display: none;
+        }
+
+        .mobile-tips.show {
+            display: block;
+        }
+
+        .file-info {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #e94560;
+        }
+
+        .file-info.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #888;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: 500;
+            text-align: right;
+            word-break: break-all;
+            max-width: 60%;
+        }
+
+        .rename-section {
+            display: none;
+            margin-top: 10px;
+            flex: 1;
+        }
+
+        .rename-section.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #ccc;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e94560;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .preview-name {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #00ff88;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            touch-action: manipulation;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #c73e54);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .progress-container.show {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.95em;
+            color: #888;
+            font-weight: 500;
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid rgba(255, 71, 87, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 15px;
+            color: #ff4757;
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: auto;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .stat-label {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .format-badge {
+            display: inline-block;
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(233, 69, 96, 0.3);
+            border-top: 4px solid #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .spinner.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @supports (padding: max(0px)) {
+            .container {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Video Renamer</h1>
+        <p class="subtitle">Ubah nama file video langsung dari HP Anda</p>
+
+        <div class="mobile-tips" id="mobileTips">
+            💡 <strong>Tips:</strong> Klik tombol di bawah untuk memilih video dari galeri HP Anda.
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+            <span class="upload-icon">📁</span>
+            <div class="upload-text">Pilih File Video</div>
+            <div class="upload-hint">Maksimal 1GB<br>MP4, AVI, MKV, MOV, WEBM</div>
+        </div>
+
+        <!-- PERBAIKAN: Hapus atribut capture agar tidak langsung ke kamera -->
+        <input type="file" id="fileInput" accept="video/*">
+
+        <div class="spinner" id="spinner"></div>
+
+        <div class="file-info" id="fileInfo">
+            <div class="info-row">
+                <span class="info-label">Nama File:</span>
+                <span class="info-value" id="originalName">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Ukuran:</span>
+                <span class="info-value" id="fileSize">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Format:</span>
+                <span class="info-value" id="fileFormat">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Durasi:</span>
+                <span class="info-value" id="videoDuration">-</span>
+            </div>
+        </div>
+
+        <div class="rename-section" id="renameSection">
+            <div class="input-group">
+                <label for="newFileName">Nama Baru <span class="format-badge" id="extBadge">.mp4</span></label>
+                <input type="text" id="newFileName" placeholder="Masukkan nama file baru..." autocomplete="off">
+                <div class="preview-name" id="previewName">preview_filename.mp4</div>
+            </div>
+
+            <button class="btn btn-primary" id="downloadBtn" disabled>
+                ⬇️ Simpan File
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">
+                🔄 Pilih Lain
+            </button>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Memproses...</div>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✅</div>
+            <div style="font-size: 1.1em; font-weight: 600; margin-bottom: 5px;">Berhasil!</div>
+            <div style="font-size: 0.9em; color: #ccc;" id="successDetails"></div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="statCount">0</div>
+                <div class="stat-label">File</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1GB</div>
+                <div class="stat-label">Max</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Gratis</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
+        let currentFile = null;
+        let processedCount = parseInt(localStorage.getItem('videoRenameCount') || '0');
+        
+        // Deteksi mobile
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        // Update statistik
+        document.getElementById('statCount').textContent = processedCount;
+        
+        // Tampilkan tips mobile
+        if (isMobile) {
+            document.getElementById('mobileTips').classList.add('show');
+        }
+
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const renameSection = document.getElementById('renameSection');
+        const newFileName = document.getElementById('newFileName');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const extBadge = document.getElementById('extBadge');
+        const previewName = document.getElementById('previewName');
+        const spinner = document.getElementById('spinner');
+        const toast = document.getElementById('toast');
+
+        // Event Listeners
+        uploadZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        uploadZone.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        }, {passive: false});
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) handleFile(files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        newFileName.addEventListener('input', updatePreview);
+        
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        downloadBtn.addEventListener('click', downloadFile);
+        resetBtn.addEventListener('click', resetForm);
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function handleFile(file) {
+            // Reset error
+            errorMessage.classList.remove('show');
+            spinner.classList.add('show');
+            
+            // Validasi ukuran file
+            if (file.size > MAX_FILE_SIZE) {
+                spinner.classList.remove('show');
+                showError(`File terlalu besar! Maksimal 1GB. Ukuran: ${formatFileSize(file.size)}`);
+                return;
+            }
+
+            // Validasi tipe file
+            if (!file.type.startsWith('video/')) {
+                spinner.classList.remove('show');
+                showError('File yang dipilih bukan video!');
+                return;
+            }
+
+            currentFile = file;
+            
+            // Tampilkan info file
+            document.getElementById('originalName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            
+            const ext = file.name.split('.').pop().toLowerCase();
+            document.getElementById('fileFormat').textContent = ext.toUpperCase();
+            extBadge.textContent = '.' + ext;
+            
+            // Dapatkan durasi video
+            getVideoDuration(file);
+            
+            // Tampilkan section
+            spinner.classList.remove('show');
+            fileInfo.classList.add('show');
+            renameSection.classList.add('show');
+            
+            // Set default nama baru
+            const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+            newFileName.value = nameWithoutExt + '_edited';
+            updatePreview();
+            
+            // Scroll ke section rename
+            setTimeout(() => {
+                renameSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+            
+            // Show toast
+            showToast('File berhasil dimuat!');
+        }
+
+        function getVideoDuration(file) {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.onloadedmetadata = () => {
+                const duration = formatDuration(video.duration);
+                document.getElementById('videoDuration').textContent = duration;
+                URL.revokeObjectURL(video.src);
+            };
+            video.onerror = () => {
+                document.getElementById('videoDuration').textContent = 'Tidak diketahui';
+            };
+            video.src = URL.createObjectURL(file);
+        }
+
+        function updatePreview() {
+            const name = newFileName.value.trim();
+            const ext = currentFile ? currentFile.name.split('.').pop().toLowerCase() : 'mp4';
+            
+            if (name) {
+                previewName.textContent = `${name}.${ext}`;
+                downloadBtn.disabled = false;
+            } else {
+                previewName.textContent = `nama_file.${ext}`;
+                downloadBtn.disabled = true;
+            }
+        }
+
+        function downloadFile() {
+            if (!currentFile || !newFileName.value.trim()) return;
+            
+            const newName = newFileName.value.trim();
+            const ext = currentFile.name.split('.').pop().toLowerCase();
+            const fullName = `${newName}.${ext}`;
+            
+            // Tampilkan progress
+            progressContainer.classList.add('show');
+            downloadBtn.disabled = true;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 90) progress = 90;
+                
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `Menyiapkan... ${Math.round(progress)}%`;
+                
+                if (progress >= 90) {
+                    clearInterval(interval);
+                    finalizeDownload(fullName);
+                }
+            }, 100);
+        }
+
+        function finalizeDownload(fullName) {
+            try {
+                // Buat link download
+                const url = URL.createObjectURL(currentFile);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fullName;
+                
+                // Untuk mobile
+                if (isMobile) {
+                    a.target = '_blank';
+                }
+                
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 1000);
+                
+                // Update progress
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Selesai!';
+                
+                // Update statistik
+                processedCount++;
+                localStorage.setItem('videoRenameCount', processedCount);
+                document.getElementById('statCount').textContent = processedCount;
+                
+                // Tampilkan sukses
+                setTimeout(() => {
+                    progressContainer.classList.remove('show');
+                    successMessage.classList.add('show');
+                    document.getElementById('successDetails').textContent = `Disimpan: ${fullName}`;
+                    downloadBtn.disabled = false;
+                    
+                    showToast('File berhasil disimpan!');
+                }, 500);
+                
+            } catch (error) {
+                showError('Gagal menyimpan file. Coba lagi.');
+                downloadBtn.disabled = false;
+                progressContainer.classList.remove('show');
+            }
+        }
+
+        function resetForm() {
+            currentFile = null;
+            fileInput.value = '';
+            newFileName.value = '';
+            
+            fileInfo.classList.remove('show');
+            renameSection.classList.remove('show');
+            progressContainer.classList.remove('show');
+            successMessage.classList.remove('show');
+            errorMessage.classList.remove('show');
+            
+            progressFill.style.width = '0%';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('Silakan pilih file baru');
+        }
+
+        function showError(message) {
+            errorMessage.textContent = '⚠️ ' + message;
+            errorMessage.classList.add('show');
+            showToast(message);
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds || isNaN(seconds)) return 'Tidak diketahui';
+            
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            if (hrs > 0) {
+                return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Pause jika perlu
+            }
+        });
+
+        document.body.addEventListener('touchmove', (e) => {
+            if (e.target === document.body) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
